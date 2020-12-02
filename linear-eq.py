@@ -1,58 +1,114 @@
 import numpy as np
 
-def solve(*eq):
+def solve(nov):
 
-    def coeff(*eq):
+    eq = []
 
-        coeff = []
+    for i in range(nov):
+        eqs = str(input(f"Enter the {i+1} equation: "))
+        eq.append(eqs)
+    print("\n")
 
-        for i in eq:
+    print(eq,end="\n")
 
-            i = i.replace(" ","")
 
-            cox = i[:i.index("x")]
-            coy = i[i.index("y")-2:i.index("y")]
-            coz = i[i.index("z")-2:i.index("z")]
+    var = []
+    coeff = []
+    for i in eq:
 
-            coeff.append(cox)
-            coeff.append(coy)
-            coeff.append(coz)
-    
-        coeff = np.array(coeff).reshape((3,3))
-        coeff = coeff.astype(np.int)
-        return(coeff)
-
-    def const(*eq):
-
-        const = []
-
-        for i in eq:
-
-            i = i.replace(" ","")
-
-            con = i[i.index("=")+1:]
+        i = i.replace(" ","")
+        equation_ls = [a for a in i]
         
-            const.append(con)
+       # print(equation_ls)
+        
+       
+        for ele in equation_ls:
 
-        const = np.array(const).reshape((3,1))
-        const = const.astype(np.int)
-        return(const)
+            if ord(ele) in range(97, 123):                   #taking out variables in list var
 
-    def sol(coeff,const):
+                var.append(ele)
+        
+            elif ele in ["+","="]:
+                pass
 
-        ans = np.dot(np.linalg.inv(coeff), const)
-        ans = ans.tolist()
+            else:
 
-        x = ans[0][0]
-        y = ans[1][0]
-        z = ans[2][0]
+                coeff.append(ele)
 
-        print(f"x = {int(x)}\ny = {int(y)}\nz = {int(z)}")
+    for _ in range(coeff.count('-')):
+        coeff[coeff.index('-')+1] = coeff[coeff.index('-')] + coeff[coeff.index('-')+1]
+        coeff.pop(coeff.index('-'))
+
+    coeff = np.array(coeff).astype(np.int32).reshape((nov, nov+1))
+
+    const = coeff[:, -1]
+    const = const.reshape((nov, 1))
+
+    del var[nov:]
+
+    coeff = np.delete(coeff, -1, 1)  
+
+    print(f"Coeff:\n{coeff}\n")
+    print(f"Const:\n{const}\n")
+    print(f"Var:\n{var}\n")
+    
+    ans = np.dot(np.linalg.inv(coeff), const).tolist()
+
+    for i in range(len(var)):
+
+        print(f"{var[i]}={ans[i]}")
+
+
+    # coeff = []
+
+    # for i in eq:
+
+    #     i = i.replace(" ","")
+
+    #     cox = i[:i.index("x")]
+    #     coy = i[i.index("y")-2:i.index("y")]
+    #     coz = i[i.index("z")-2:i.index("z")]
+
+    #     coeff.append(cox)
+    #     coeff.append(coy)
+    #     coeff.append(coz)
+    
+    # coeff = np.array(coeff).reshape((3,3))
+    # coeff = coeff.astype(np.int)
+    # return(coeff)
+
+    # def const(*eq):
+
+    #     const = []
+
+    #     for i in eq:
+
+    #         i = i.replace(" ","")
+
+    #         con = i[i.index("=")+1:]
+        
+    #         const.append(con)
+
+    #     const = np.array(const).reshape((3,1))
+    #     const = const.astype(np.int)
+    #     return(const)
+
+    # def sol(coeff,const):
+
+    #     ans = np.dot(np.linalg.inv(coeff), const)
+    #     ans = ans.tolist()
+
+    #     x = ans[0][0]
+    #     y = ans[1][0]
+    #     z = ans[2][0]
+
+    #     print(f"x = {int(x)}\ny = {int(y)}\nz = {int(z)}")
 
 #        print(np.linalg.inv(coeff))
 
-    print(f"Solution :")
-    sol(coeff(*eq), const(*eq))
+    # print(f"Solution :")
+    # sol(coeff(*eq), const(*eq))
+
 
 
 
@@ -60,12 +116,10 @@ if __name__=="__main__":
 
     print('''Please note that:
              1). Equations should have non zero coefficient.
-             2). Do not provide more than 1 space in between like 2x   +  3y   4  z  = 30.
-             3). Answers are rounded up.\n''')
+             2). Please enter only single digit coefficient.
+             3). Do not provide more than 1 space in between like 2x   +  3y   4  z  = 30.\n''')
 
-    eq1 = str(input("Enter 1st eq. : "))
-    eq2 = str(input("Enter 2nd eq. : "))
-    eq3 = str(input("Enter 3rd eq. : "))
+    nov = int(input("Enter the number of variable: "))
     print("\n")
 
-    solve(eq1,eq2,eq3)
+    solve(nov)
